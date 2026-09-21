@@ -38,4 +38,5 @@ line_length = 119
 mypy = "^2.1.0"
 black = "^26.5.0"
 isort = "^8.0.1"
+flake8 = "^7.3.0"
 

@@ -1,0 +1,60 @@
+{% extends 'mailings/base.html' %}
+
+{% block title %}Рассылка #{{ mailing.pk }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Рассылка #{{ mailing.pk }}</h1>
+        <div>
+            {% if mailing.status != 'completed' and mailing.start_time <= now and mailing.end_time >= now %}
+                <a href="{% url 'mailings:send_mailing' mailing.pk %}" class="btn btn-success" onclick="return confirm('Запустить рассылку сейчас?')">Запустить вручную</a>
+            {% endif %}
+            <a href="{% url 'mailings:mailing_update' mailing.pk %}" class="btn btn-outline-primary">Редактировать</a>
+            <a href="{% url 'mailings:mailing_delete' mailing.pk %}" class="btn btn-outline-danger">Удалить</a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <div class="card-header">
+            <strong>Детали рассылки</strong>
+        </div>
+        <div class="card-body">
+            <p><strong>Сообщение:</strong> {{ mailing.message.title }}</p>
+            <p><strong>Текст письма:</strong><br>{{ mailing.message.body|linebreaks }}</p>
+            <p><strong>Период:</strong> с {{ mailing.start_time|date:"d.m.Y H:i" }} по {{ mailing.end_time|date:"d.m.Y H:i" }}</p>
+            <p><strong>Статус:</strong>
+                {% if mailing.status == 'created' %}Создана
+                {% elif mailing.status == 'started' %}Запущена
+                {% else %}Завершена{% endif %}
+            </p>
+            <p><strong>Получатели ({{ mailing.recipients.count }}):</strong></p>
+            <ul>
+                {% for client in mailing.recipients.all %}
+                    <li>{{ client.email }} ({{ client.full_name }})</li>
+                {% empty %}
+                    <li>Нет получателей</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <h3>Попытки отправки</h3>
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr><th>Дата</th><th>Статус</th><th>Ответ сервера</th></tr>
+        </thead>
+        <tbody>
+            {% for attempt in mailing.attempts.all %}
+                <tr>
+                    <td>{{ attempt.attempt_time|date:"d.m.Y H:i:s" }}</td>
+                    <td>{% if attempt.status == 'success' %}✅ Успешно{% else %}❌ Не успешно{% endif %}</td>
+                    <td>{{ attempt.server_response|truncatechars:100 }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="3">Попыток пока нет.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'mailings:mailing_list' %}" class="btn btn-secondary">Назад к списку</a>
+</div>
+{% endblock %}>

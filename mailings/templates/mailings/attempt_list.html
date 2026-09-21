@@ -1,0 +1,44 @@
+{% extends 'mailings/base.html' %}
+
+{% block title %}История попыток{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>История отправки писем</h1>
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Дата и время</th>
+                <th>Рассылка</th>
+                <th>Тема письма</th>
+                <th>Статус</th>
+                <th>Ответ сервера</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attempt in attempts %}
+            <tr>
+                <td>{{ attempt.attempt_time|date:"d.m.Y H:i:s" }}</td>
+                <td><a href="{% url 'mailings:mailing_detail' attempt.mailing.pk %}">Рассылка #{{ attempt.mailing.pk }}</a></td>
+                <td>{{ attempt.mailing.message.title }}</td>
+                <td>{% if attempt.status == 'success' %}✅ Успешно{% else %}❌ Не успешно{% endif %}</td>
+                <td>{{ attempt.server_response|truncatechars:80 }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">Попыток пока нет.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if is_paginated %}
+        <nav>
+            <ul class="pagination">
+                {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page=1">Первая</a></li>{% endif %}
+                {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Предыдущая</a></li>{% endif %}
+                <li class="page-item active"><span class="page-link">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span></li>
+                {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Следующая</a></li>{% endif %}
+                {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Последняя</a></li>{% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+</div>
+{% endblock %}

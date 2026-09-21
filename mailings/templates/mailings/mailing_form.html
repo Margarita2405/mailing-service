@@ -1,0 +1,35 @@
+{% extends 'mailings/base.html' %}
+
+{% block title %}{% if form.instance.pk %}Редактировать рассылку{% else %}Новая рассылка{% endif %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* стили для datetime-local — корректное отображение */
+    input[type="datetime-local"] {
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{% if form.instance.pk %}Редактирование рассылки{% else %}Создание рассылки{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% if field.errors %}
+                    <div class="alert alert-danger mt-1">{{ field.errors }}</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success">Сохранить</button>
+        <a href="{% url 'mailings:mailing_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

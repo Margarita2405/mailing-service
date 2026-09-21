@@ -1,0 +1,14 @@
+{% extends 'mailings/base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2>Вход</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Войти</button>
+    </form>
+    <p>Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрируйтесь</a></p>
+    <p><a href="{% url 'users:password_reset' %}">Забыли пароль?</a></p>
+</div>
+{% endblock %}

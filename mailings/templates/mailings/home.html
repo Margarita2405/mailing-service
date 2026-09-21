@@ -1,0 +1,61 @@
+{% extends 'mailings/base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Добро пожаловать в Mailer</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ total_mailings }}</h3>
+                    <p>Всего рассылок</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ active_mailings }}</h3>
+                    <p>Активных рассылок</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h3>{{ unique_clients }}</h3>
+                    <p>Уникальных получателей</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Персональная статистика (только для авторизованных) -->
+    {% if user.is_authenticated %}
+        <div class="card mt-4">
+            <div class="card-header">Ваша статистика</div>
+            <div class="card-body">
+                <p>Всего попыток отправки: {{ total_attempts }}</p>
+                <p>Успешных: {{ success_attempts }}</p>
+                <p>Неуспешных: {{ failed_attempts }}</p>
+                <p>Отправлено сообщений: {{ sent_messages }}</p>
+            </div>
+        </div>
+    {% endif %}
+    {% if recent_attempts %}
+        <h3 class="mt-5">Последние попытки</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr><th>Дата</th><th>Рассылка</th><th>Статус</th><th>Ответ</th></tr>
+            </thead>
+            <tbody>
+            {% for attempt in recent_attempts %}
+                <tr><td>{{ attempt.attempt_time|date:"d.m.Y H:i" }}</td>
+                    <td>{{ attempt.mailing.message.title }}</td>
+                    <td>{% if attempt.status == 'success' %}✅ Успешно{% else %}❌ {{ attempt.get_status_display }}{% endif %}</td>
+                    <td>{{ attempt.server_response|truncatechars:50 }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}
