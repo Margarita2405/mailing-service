@@ -1,3 +1,4 @@
+
 # Mailer — сервис управления email-рассылками
 
 **Mailer** — это веб-приложение на Django, которое позволяет пользователям создавать, управлять и отслеживать
@@ -39,7 +40,7 @@ email-рассылки. Сервис поддерживает планирова
 ## 📁 Структура проекта
 
 ```
-Project10_Course_work4_Skypro/
+mailing-service/
 ├── config/ # Настройки проекта
 ├── mailings/ # Основное приложение
 │ ├── management/commands/run_mailing.py
@@ -54,7 +55,8 @@ Project10_Course_work4_Skypro/
 │ ├── tests.py
 │ ├── urls.py # Маршруты приложения
 │ └── views.py # CRUD, статистика, отправка
-│ ├── static/ # Статические файлы
+├── static/ # Статические файлы
+├── screenshots/ # Скриншоты (демонстрация работы проекта)
 ├── users/   # аутентификация
 │ ├── migrations/ 
 │ ├── templates/users # Шаблоны приложения
@@ -80,9 +82,9 @@ Project10_Course_work4_Skypro/
 
 ### 1. Клонирование репозитория
 
-```
-git clone https://github.com/Margarita2405/Project10_Course_work4_Skypro
-cd Project10_Course_work4_Skypro
+```bash
+git clone https://github.com/Margarita2405/mailing-service
+cd mailing-service
 ```
 
 ### 2. Создать базу данных PostgreSQL
@@ -91,7 +93,7 @@ CREATE DATABASE mailing_service;
 
 ### 3. Создать файл .env в корне проекта (по примеру .env.example):
 
-```
+```text
 SECRET_KEY=your_secret_key_here
 
 DEBUG=True
@@ -112,20 +114,20 @@ GITHUB_TOKEN=your_github_token_here
 
 ### 4. Создать и применить миграции
 
-```
+```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
 ### 5. Собрать статические файлы 
 
-```
+```bash
 python manage.py collectstatic
 ```
 
 ### 6. Создать суперпользователя
 
-```
+```bash
 python manage.py createsuperuser
 ```
 
@@ -138,19 +140,20 @@ python manage.py createsuperuser
 
 - Для запуска Redis локально выполните:
 
-```
+```bash
 redis-server
 ```
 
 - Проверить работу Redis можно командой:
 
-```
+```bash
 redis-cli ping
 # Должен вернуть PONG
 ```
 
 ### 8. Запуск сервера разработки
-```
+
+```bash
 python manage.py runserver
 Проект будет доступен по адресу: http://127.0.0.1:8000
 ```
@@ -159,7 +162,7 @@ python manage.py runserver
 
 Для работы роли менеджера необходимо создать группу и назначить права:
 
-```
+```bash
 python manage.py shell
 
 from django.contrib.auth.models import Group, Permission
@@ -176,16 +179,19 @@ group.permissions.set(perms)
 
 После этого добавьте нужного пользователя в группу через админку или shell.
 
-## Использование
+## 📚 Использование
 
-- Регистрация – /users/register/
-- Вход – /users/login/
-- Главная страница – / (статистика и последние попытки)
-- Клиенты – /mailings/clients/
-- Сообщения – /mailings/messages/
-- Рассылки – /mailings/mailings/ (создание, редактирование, детальный просмотр с ручным запуском)
-- Попытки – /mailings/attempts/ (история отправок)
-- Админка – /admin/
+| URL | Описание                                                                  |
+| :--- |:--------------------------------------------------------------------------|
+| `/users/register/` | Регистрация пользователя                                                  |
+| `/users/login/` | Вход в систему                                                            |
+| `/mailings/clients/` | Клиенты                                                                   |
+| `/mailings/messages/` | Сообщения                                                                 |
+| `/mailings/mailings/` | Рассылки (создание, редактирование, детальный просмотр с ручным запуском) |
+| `/mailings/attempts/` | Попытки (история отправок)                                                |
+| `/admin/` | Админка                                                                   |
+| `/mailings/` | Главная страница (статистика и последние попытки)                         |
+
 
 ## Запуск рассылки вручную
 На детальной странице рассылки (только если текущее время находится между start_time и end_time) появляется
@@ -194,7 +200,7 @@ group.permissions.set(perms)
 
 ## Запуск рассылок через командную строку
 
-```
+```bash
 python manage.py run_mailing
 ```
 Команда находит все активные рассылки (текущее время в интервале) и отправляет их.
@@ -209,6 +215,43 @@ python manage.py run_mailing
 - Создать рассылку с интервалом, включающим текущее время, и запустить вручную.
 - Проверить появление записей в «Попытках» и обновление статистики на главной.
 
+
+## 📊 Демонстрация работы проекта
+
+### 1. Регистрация нового пользователя
+Страница создания аккаунта на сайте. 
+![Создание аккаунта](screenshots/1_user_registration.png)
+
+### 2. Вход в личный кабинет
+Страница входа в личный кабинет с помощью ввода логина и пароля.
+![Вход на сайт](screenshots/2_users_login.png)
+
+### 3. Главная страница
+Приветствие и отображение статистики: общее число рассылок, активных рассылок, уникальных получателей; персональная статистика (попытки, успешные/неуспешные).
+![Главная страница сайта](screenshots/3_home_page.png)
+
+### 4. Клиенты
+Страница добавления, редактирования и удаления клиентов.
+![Добавление клиента ](screenshots/4_mailings_clients.png)
+
+### 5. Сообщения
+Страница добавления, редактирования и удаления сообщений.
+![Добавление сообщения](screenshots/5_mailings_messages.png)
+
+### 6. Рассылки
+Страница добавления, редактирования, удаления и отключения рассылок.
+![Создание рассылок](screenshots/6_mailings_mailings.png)
+
+### 7. Попытки
+История отправки писем.
+![Попытки отправки писем](screenshots/7_mailings_attempts.png)
+
+### 8. Панель администратора (Django Admin)
+Централизованный интерфейс администрирования пользователей и групп, ведения получателей рассылок, попыток и сообщений.
+![Админка Django](screenshots/8_django_admin.png)
+
+---
+
 ## Документация:
 
 Для получения дополнительной информации обратитесь 
@@ -218,9 +261,10 @@ python manage.py run_mailing
 
 Проект выполнен в рамках курсовой работы. Свободное использование только в учебных целях.
 
-## Контакты
-Разработчик: Буршева Маргарита
+## 👩‍💻 Автор
 
-Email: mbursheva@mail.ru
+**Маргарита Буршева**
+- **Email:** mbursheva@mail.ru
+- **GitHub Проект:** [mailing-service](https://github.com)
 
-Проект: https://github.com/Margarita2405/Project10_Course_work4_Skypro
+*Курсовой проект выполнен в рамках программы обучения Университета Skypro.*
